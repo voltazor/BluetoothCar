@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:padding="@dimen/margin_15dp">
+
+    <TextView
+            android:id="@+id/toggleStateLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/toggleState"
+            android:layout_alignBottom="@id/toggleState"
+            android:gravity="center"
+            android:text="@string/lbl_toggle_bt_state"/>
+
+    <ToggleButton
+            android:id="@+id/toggleState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:layout_toRightOf="@id/toggleStateLabel"/>
+
+    <TextView
+            android:id="@+id/startSearchingLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_below="@id/toggleState"
+            android:layout_marginTop="@dimen/margin_15dp"
+            android:text="@string/lbl_find_devices"/>
+
+    <Button
+            android:id="@+id/startSearching"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:layout_below="@id/startSearchingLabel"
+            android:text="@string/lbl_scan"/>
+
+    <ListView
+            android:id="@+id/foundDevices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/startSearching"/>
+
+</RelativeLayout>
+

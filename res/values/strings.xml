@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BluetoothTest</string>
+    <string name="lbl_toggle_bt_state">Toggle Bluetooth state:</string>
+    <string name="lbl_find_devices">Find devices:</string>
+    <string name="lbl_scan">Scan</string>
+</resources>
