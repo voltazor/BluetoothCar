@@ -8,8 +8,8 @@
             android:id="@+id/toggleStateLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@id/toggleState"
-            android:layout_alignBottom="@id/toggleState"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="@dimen/margin_15dp"
             android:gravity="center"
             android:text="@string/lbl_toggle_bt_state"/>
 
@@ -26,8 +26,17 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:layout_below="@id/toggleState"
+            android:layout_marginTop="@dimen/margin_15dp"/>
+
+    <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toggleState"
+            android:layout_alignParentRight="true"
             android:layout_marginTop="@dimen/margin_15dp"
-            android:text="@string/lbl_find_devices"/>
+            android:visibility="gone"
+            style="@android:style/Widget.ProgressBar.Small"/>
 
     <Button
             android:id="@+id/startSearching"
