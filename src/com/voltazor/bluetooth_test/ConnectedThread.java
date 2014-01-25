@@ -12,26 +12,20 @@ import java.util.Random;
  */
 public class ConnectedThread extends Thread {
     private static BluetoothSocket mmSocket;
-    private final InputStream mmInStream;
-    private final OutputStream mmOutStream;
+    private InputStream mmInStream;
+    private OutputStream mmOutStream;
     private Random random = new Random(System.currentTimeMillis());
 
-    private static boolean canceled = false;
+    private boolean canceled = false;
 
     public ConnectedThread(BluetoothSocket socket) {
         mmSocket = socket;
-        InputStream tmpIn = null;
-        OutputStream tmpOut = null;
-
         // Get the input and output streams, using temp objects because
         // member streams are final
         try {
-            tmpIn = socket.getInputStream();
-            tmpOut = socket.getOutputStream();
+            mmInStream = socket.getInputStream();
+            mmOutStream = socket.getOutputStream();
         } catch (IOException e) { }
-
-        mmInStream = tmpIn;
-        mmOutStream = tmpOut;
     }
 
     public void run() {
@@ -42,7 +36,7 @@ public class ConnectedThread extends Thread {
                 break;
             }
             try {
-                Thread.sleep(10000);
+                Thread.sleep(300);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -50,8 +44,7 @@ public class ConnectedThread extends Thread {
     }
 
     /* Call this from the main activity to shutdown the connection */
-    public static void cancel() {
-        canceled = true;
+    public void cancel() {
         try {
             mmSocket.close();
         } catch (IOException e) { }

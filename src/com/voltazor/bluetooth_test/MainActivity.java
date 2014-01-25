@@ -2,13 +2,14 @@ package com.voltazor.bluetooth_test;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.ParcelUuid;
 import android.view.View;
 import android.widget.*;
 
@@ -19,6 +20,7 @@ public class MainActivity extends Activity {
 
     private BluetoothAdapter mBluetoothAdapter;
 
+    private ProgressBar progressBar;
     private DevicesAdapter adapter;
 
     private List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
@@ -42,6 +44,7 @@ public class MainActivity extends Activity {
         if (registered) {
             unregisterReceiver(mReceiver);
         }
+        setBluetoothEnabled(false);
     }
 
     private boolean checkBT() {
@@ -53,7 +56,7 @@ public class MainActivity extends Activity {
         ToggleButton toggleState = (ToggleButton) findViewById(R.id.toggleState);
         final Button startSearching = (Button) findViewById(R.id.startSearching);
         ListView foundDevices = (ListView) findViewById(R.id.foundDevices);
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+        progressBar = (ProgressBar) findViewById(R.id.progress);
 
         toggleState.setEnabled(true);
         toggleState.setChecked(mBluetoothAdapter.isEnabled());
@@ -69,15 +72,7 @@ public class MainActivity extends Activity {
         startSearching.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
-                progressBar.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressBar.setVisibility(View.GONE);
-                    }
-                }, 10000);
-                devices.clear();
-                adapter.updateContent(devices);
+                clearResults();
                 startSearching();
             }
         });
@@ -97,17 +92,30 @@ public class MainActivity extends Activity {
             mBluetoothAdapter.enable();
         } else {
             mBluetoothAdapter.disable();
+            clearResults();
         }
     }
 
     private void startSearching() {
         mBluetoothAdapter.cancelDiscovery();
         mBluetoothAdapter.startDiscovery();
-        registerReceiver(mReceiver, new IntentFilter(BluetoothDevice.ACTION_FOUND));
+        createReceiver();
+    }
+
+    private void createReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(mReceiver, filter);
         registered = true;
     }
 
-    // Create a BroadcastReceiver for ACTION_FOUND
+    private void clearResults() {
+        devices.clear();
+        adapter.updateContent(devices);
+    }
+
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -120,6 +128,10 @@ public class MainActivity extends Activity {
                     devices.add(device);
                     adapter.updateContent(devices);
                 }
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+                progressBar.setVisibility(View.VISIBLE);
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                progressBar.setVisibility(View.GONE);
             }
         }
     };
@@ -127,7 +139,8 @@ public class MainActivity extends Activity {
 
     private void connectToDevice(int position) {
         if (connected) {
-            ConnectedThread.cancel();
+//            ConnectedThread.cancel();
+            connected = false;
         } else {
             BluetoothDevice device = devices.get(position);
             (new ConnectThread(device)).start();
