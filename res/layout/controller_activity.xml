@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TableLayout style="@style/TableLayout.Controls">
+
+        <TableRow style="@style/TableRow.ButtonsRow">
+
+            <ToggleButton
+                    android:id="@+id/forward"
+                    style="@style/Button.Control"
+                    android:textOn="@string/lbl_forward"
+                    android:textOff="@string/lbl_forward"/>
+
+            <ToggleButton
+                    android:id="@+id/right"
+                    style="@style/Button.Control"
+                    android:textOn="@string/lbl_right"
+                    android:textOff="@string/lbl_right"/>
+
+        </TableRow>
+
+        <TableRow style="@style/TableRow.ButtonsRow">
+
+            <ToggleButton
+                    android:id="@+id/back"
+                    style="@style/Button.Control"
+                    android:textOn="@string/lbl_back"
+                    android:textOff="@string/lbl_back"/>
+
+            <ToggleButton
+                    android:id="@+id/left"
+                    style="@style/Button.Control"
+                    android:textOn="@string/lbl_left"
+                    android:textOff="@string/lbl_left"/>
+
+        </TableRow>
+
+    </TableLayout>
+
+</RelativeLayout>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Button"/>
+
+    <style name="Button.Control" parent="Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginTop">@dimen/margin_20dp</item>
+        <item name="android:layout_marginLeft">@dimen/margin_30dp</item>
+        <item name="android:layout_marginRight">@dimen/margin_30dp</item>
+        <item name="android:layout_marginBottom">@dimen/margin_20dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="TableLayout"/>
+
+    <style name="TableLayout.Controls">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="TableRow"/>
+
+    <style name="TableRow.ButtonsRow" parent="TableRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+</resources>
