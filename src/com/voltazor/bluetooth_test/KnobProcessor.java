@@ -39,6 +39,9 @@ public class KnobProcessor implements View.OnTouchListener {
     private int left;
     private int right;
 
+    private KnobHorizontalListener horizontalListener;
+    private KnobVerticalListener verticalListener;
+
     public KnobProcessor() {
         this(null);
     }
@@ -59,6 +62,14 @@ public class KnobProcessor implements View.OnTouchListener {
         }
     }
 
+    public void setHorizontalListener(KnobHorizontalListener listener) {
+        this.horizontalListener = listener;
+    }
+
+    public void setVerticalListener(KnobVerticalListener listener) {
+        this.verticalListener = listener;
+    }
+
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         float x = event.getRawX();
@@ -75,13 +86,20 @@ public class KnobProcessor implements View.OnTouchListener {
                         view.setTranslationY(deltaY);
 
                         int value = calculateDec(parentTop, (parentTop + view.getTop() + view.getHeight() / 2), y, PARTS);
-                        if (value >= 0 && value != forward) {
+                        if (forward >= 0 && value != forward) {
                             forward = value;
+                            if (verticalListener != null) {
+                                verticalListener.forward(forward);
+                            }
                             Log.d("forward: ", String.valueOf(forward));
                         }
+
                         value = calculateInc((parentTop + view.getTop() + view.getHeight() / 2), parentBottom, y, PARTS);
-                        if (value >= 0 && value != backward) {
+                        if (backward >= 0 && value != backward) {
                             backward = value;
+                            if (verticalListener != null) {
+                                verticalListener.backward(backward);
+                            }
                             Log.d("backward: ", String.valueOf(backward));
                         }
                     }
@@ -98,13 +116,20 @@ public class KnobProcessor implements View.OnTouchListener {
                     }
 
                     int value = calculateDec(parentLeft, (parentLeft + view.getLeft() + view.getWidth() / 2), x, PARTS);
-                    if (value >= 0 && value != left) {
+                    if (left >= 0 && value != left) {
                         left = value;
+                        if (horizontalListener != null) {
+                            horizontalListener.left(left);
+                        }
                         Log.d("left: ", String.valueOf(left));
                     }
+
                     value = calculateInc((parentLeft + view.getLeft() + view.getWidth() / 2), parentRight, x, PARTS);
-                    if (value >= 0 && value != right) {
+                    if (right >= 0 && value != right) {
                         right = value;
+                        if (horizontalListener != null) {
+                            horizontalListener.right(right);
+                        }
                         Log.d("right: ", String.valueOf(right));
                     }
                       
@@ -125,8 +150,16 @@ public class KnobProcessor implements View.OnTouchListener {
     private void reset(View view) {
         forward = 0;
         backward = 0;
+        if (verticalListener != null) {
+            verticalListener.forward(forward);
+            verticalListener.backward(backward);
+        }
         left = 0;
         right = 0;
+        if (horizontalListener != null) {
+            horizontalListener.left(left);
+            horizontalListener.right(right);
+        }
         posX = 0;
         posY = 0;
         view.setTranslationX(0);
@@ -194,18 +227,18 @@ public class KnobProcessor implements View.OnTouchListener {
     }
 
     public interface KnobVerticalListener {
-        
-        public void forward();
 
-        public void back();
+        public void forward(int value);
+
+        public void backward(int value);
 
     }
 
     public interface KnobHorizontalListener {
 
-        public void left();
+        public void left(int value);
 
-        public void right();
+        public void right(int value);
 
     }
 

@@ -68,6 +68,8 @@ public class ConnectionThread implements Runnable {
                 }
             }
 
+            read();
+
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
@@ -82,7 +84,7 @@ public class ConnectionThread implements Runnable {
 //            curCommand &= command.value;
 //        }
         curCommand = command.value;
-        Log.d(TAG, command.name());
+        Log.d(TAG, "apply: " + command.name());
     }
 
     private void write(int msg) {

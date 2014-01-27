@@ -3,9 +3,6 @@ package com.voltazor.bluetooth_test;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
@@ -70,7 +67,7 @@ public class ControllerActivity extends Activity{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    back();
+                    backward();
                 } else {
                     pause();
                 }
@@ -91,7 +88,7 @@ public class ControllerActivity extends Activity{
         applyCommand(ConnectionThread.COMMAND.FORWARD);
     }
 
-    private void back() {
+    private void backward() {
         applyCommand(ConnectionThread.COMMAND.BACKWARD);
     }
 
