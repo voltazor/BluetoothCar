@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              style="@style/Parent.Match">
+
+    <RelativeLayout
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            style="@style/Parent.Wrap">
+
+        <FrameLayout
+                android:id="@+id/base_left"
+                style="@style/FrameLayout.ControlBase"/>
+
+        <ImageView
+                android:id="@+id/knob_forward_backward"
+                style="@style/ImageView.ControlKnob"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            style="@style/Parent.Wrap">
+
+        <FrameLayout
+                android:id="@+id/base_right"
+                style="@style/FrameLayout.ControlBase"/>
+
+        <ImageView
+                android:id="@+id/knob_left_right"
+                style="@style/ImageView.ControlKnob"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

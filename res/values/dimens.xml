@@ -11,6 +11,8 @@
     <dimen name="margin_40dp">40dp</dimen>
     <dimen name="margin_45dp">45dp</dimen>
     <dimen name="margin_50dp">50dp</dimen>
+    <dimen name="control_base_size">256dp</dimen>
+    <dimen name="control_knob_size">128dp</dimen>
 
 
 </resources>

@@ -34,6 +34,7 @@ public class MainActivity extends Activity {
 
         if (checkBT()) {
             initUI();
+            createReceiver();
         }
     }
 
@@ -63,6 +64,10 @@ public class MainActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 setBluetoothEnabled(isChecked);
                 startSearching.setEnabled(isChecked);
+                if (!isChecked) {
+                    devices.clear();
+                    adapter.updateContent(devices);
+                }
             }
         });
 
@@ -95,9 +100,11 @@ public class MainActivity extends Activity {
     }
 
     private void startSearching() {
-        mBluetoothAdapter.cancelDiscovery();
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
         mBluetoothAdapter.startDiscovery();
-        createReceiver();
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND
@@ -105,31 +112,36 @@ public class MainActivity extends Activity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Get the BluetoothDevice object from the Intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // Add the name and address to an array adapter to show in a ListView
-                if (!devices.contains(device)) {
-                    devices.add(device);
-                    adapter.updateContent(devices);
-                }
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-                progressBar.setVisibility(View.VISIBLE);
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                progressBar.setVisibility(View.GONE);
-            } else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
-                Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Connected");
-            } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
-                Toast.makeText(MainActivity.this, "Disconnected", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Disconnected");
+            switch (action) {
+                case BluetoothDevice.ACTION_FOUND:
+                    // Get the BluetoothDevice object from the Intent
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    // Add the name and address to an array adapter to show in a ListView
+                    if (!devices.contains(device)) {
+                        devices.add(device);
+                        adapter.updateContent(devices);
+                    }
+                    break;
+                case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
+                    progressBar.setVisibility(View.VISIBLE);
+                    break;
+                case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
+                    progressBar.setVisibility(View.GONE);
+                    break;
+                case BluetoothDevice.ACTION_ACL_CONNECTED:
+                    Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Connected");
+                    break;
+                case BluetoothDevice.ACTION_ACL_DISCONNECTED:
+                    Toast.makeText(MainActivity.this, "Disconnected", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Disconnected");
+                    break;
             }
         }
     };
 
     private void createReceiver() {
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
         filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
@@ -138,7 +150,9 @@ public class MainActivity extends Activity {
     }
 
     private void connectToDevice(int position) {
-        Intent intent = new Intent(this, ControllerActivity.class);
+        mBluetoothAdapter.cancelDiscovery();
+        progressBar.setVisibility(View.GONE);
+        Intent intent = new Intent(this, ControlActivity.class);
         intent.putExtra(Const.EXTRA.DEVICE, devices.get(position));
         startActivity(intent);
     }

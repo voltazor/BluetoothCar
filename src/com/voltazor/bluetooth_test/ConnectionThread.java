@@ -64,11 +64,12 @@ public class ConnectionThread implements Runnable {
             if (mSocket.isConnected()) {
                 if (curCommand != COMMAND.PAUSE.value) {
                     write(curCommand);
+                    Log.d(TAG, "Command: " + curCommand);
                 }
             }
 
             try {
-                Thread.sleep(20);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 Log.e(TAG, "sleep failed", e);
             }
@@ -129,7 +130,7 @@ public class ConnectionThread implements Runnable {
 
     public enum COMMAND {
 
-        PAUSE(0x00000000), FORWARD(0x00000011), LEFT(0x00001100), RIGHT(0x00110000), BACKWARD(0x11000000);
+        PAUSE(0b0000_0000), FORWARD(0b0000_0011), LEFT(0b0000_1100), RIGHT(0b0011_0000), BACKWARD(0b1100_0000);
 
         public final int value;
 
