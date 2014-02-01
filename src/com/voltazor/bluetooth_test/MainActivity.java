@@ -2,14 +2,13 @@ package com.voltazor.bluetooth_test;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.ParcelUuid;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 
@@ -17,16 +16,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private BluetoothAdapter mBluetoothAdapter;
 
-    private ProgressBar progressBar;
     private DevicesAdapter adapter;
+    private ProgressBar progressBar;
 
     private List<BluetoothDevice> devices = new ArrayList<BluetoothDevice>();
 
     private boolean registered = false;
-    private boolean connected = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +34,7 @@ public class MainActivity extends Activity {
 
         if (checkBT()) {
             initUI();
+            createReceiver();
         }
     }
 
@@ -44,7 +44,6 @@ public class MainActivity extends Activity {
         if (registered) {
             unregisterReceiver(mReceiver);
         }
-        setBluetoothEnabled(false);
     }
 
     private boolean checkBT() {
@@ -65,6 +64,10 @@ public class MainActivity extends Activity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 setBluetoothEnabled(isChecked);
                 startSearching.setEnabled(isChecked);
+                if (!isChecked) {
+                    devices.clear();
+                    adapter.updateContent(devices);
+                }
             }
         });
 
@@ -72,7 +75,8 @@ public class MainActivity extends Activity {
         startSearching.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearResults();
+                devices.clear();
+                adapter.updateContent(devices);
                 startSearching();
             }
         });
@@ -92,61 +96,65 @@ public class MainActivity extends Activity {
             mBluetoothAdapter.enable();
         } else {
             mBluetoothAdapter.disable();
-            clearResults();
         }
     }
 
     private void startSearching() {
-        mBluetoothAdapter.cancelDiscovery();
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
         mBluetoothAdapter.startDiscovery();
-        createReceiver();
+        progressBar.setVisibility(View.VISIBLE);
     }
 
-    private void createReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(BluetoothDevice.ACTION_FOUND);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(mReceiver, filter);
-        registered = true;
-    }
-
-    private void clearResults() {
-        devices.clear();
-        adapter.updateContent(devices);
-    }
-
+    // Create a BroadcastReceiver for ACTION_FOUND
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             // When discovery finds a device
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                // Get the BluetoothDevice object from the Intent
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // Add the name and address to an array adapter to show in a ListView
-                if (!devices.contains(device)) {
-                    devices.add(device);
-                    adapter.updateContent(devices);
-                }
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
-                progressBar.setVisibility(View.VISIBLE);
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                progressBar.setVisibility(View.GONE);
+            switch (action) {
+                case BluetoothDevice.ACTION_FOUND:
+                    // Get the BluetoothDevice object from the Intent
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    // Add the name and address to an array adapter to show in a ListView
+                    if (!devices.contains(device)) {
+                        devices.add(device);
+                        adapter.updateContent(devices);
+                    }
+                    break;
+                case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
+                    progressBar.setVisibility(View.VISIBLE);
+                    break;
+                case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
+                    progressBar.setVisibility(View.GONE);
+                    break;
+                case BluetoothDevice.ACTION_ACL_CONNECTED:
+                    Toast.makeText(MainActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Connected");
+                    break;
+                case BluetoothDevice.ACTION_ACL_DISCONNECTED:
+                    Toast.makeText(MainActivity.this, "Disconnected", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Disconnected");
+                    break;
             }
         }
     };
 
+    private void createReceiver() {
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        filter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        registerReceiver(mReceiver, filter);
+        registered = true;
+    }
 
     private void connectToDevice(int position) {
-        if (connected) {
-//            ConnectedThread.cancel();
-            connected = false;
-        } else {
-            BluetoothDevice device = devices.get(position);
-            (new ConnectThread(device)).start();
-            connected = true;
-        }
-
+        mBluetoothAdapter.cancelDiscovery();
+        progressBar.setVisibility(View.GONE);
+        Intent intent = new Intent(this, ControlActivity.class);
+        intent.putExtra(Const.EXTRA.DEVICE, devices.get(position));
+        startActivity(intent);
     }
 
 }

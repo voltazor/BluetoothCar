@@ -4,4 +4,9 @@
     <string name="lbl_toggle_bt_state">Toggle Bluetooth state:</string>
     <string name="lbl_find_devices">Find devices:</string>
     <string name="lbl_scan">Scan</string>
+    <string name="lbl_forward">Forward</string>
+    <string name="lbl_back">Back</string>
+    <string name="lbl_left">Left</string>
+    <string name="lbl_right">Right</string>
+    <string name="lbl_control">Control</string>
 </resources>
