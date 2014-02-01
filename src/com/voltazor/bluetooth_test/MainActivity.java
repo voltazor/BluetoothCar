@@ -107,7 +107,7 @@ public class MainActivity extends Activity {
         progressBar.setVisibility(View.VISIBLE);
     }
 
-    // Create a BroadcastReceiver for ACTION_FOUND
+    // Create a BroadcastReceiver
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();

@@ -41,6 +41,7 @@ public class KnobProcessor implements View.OnTouchListener {
 
     private KnobHorizontalListener horizontalListener;
     private KnobVerticalListener verticalListener;
+    private PauseListener pauseListener;
 
     public KnobProcessor() {
         this(null);
@@ -68,6 +69,10 @@ public class KnobProcessor implements View.OnTouchListener {
 
     public void setVerticalListener(KnobVerticalListener listener) {
         this.verticalListener = listener;
+    }
+
+    public void setPauseListener(PauseListener pauseListener) {
+        this.pauseListener = pauseListener;
     }
 
     @Override
@@ -148,6 +153,9 @@ public class KnobProcessor implements View.OnTouchListener {
     }
 
     private void reset(View view) {
+        if (pauseListener != null) {
+            pauseListener.pause();
+        }
         forward = 0;
         backward = 0;
         if (verticalListener != null) {
@@ -239,6 +247,12 @@ public class KnobProcessor implements View.OnTouchListener {
         public void left(int value);
 
         public void right(int value);
+
+    }
+
+    public interface PauseListener {
+
+        public void pause();
 
     }
 

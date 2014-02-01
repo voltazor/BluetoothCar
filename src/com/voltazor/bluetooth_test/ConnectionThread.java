@@ -61,13 +61,6 @@ public class ConnectionThread implements Runnable {
         }
 
         while (!canceled) {
-            if (mSocket.isConnected()) {
-                if (curCommand != COMMAND.PAUSE.value) {
-                    write(curCommand);
-                    Log.d(TAG, "Command: " + curCommand);
-                }
-            }
-
             read();
 
             try {
@@ -80,11 +73,11 @@ public class ConnectionThread implements Runnable {
     }
 
     public void applyCommand(COMMAND command) {
-//        if ((curCommand & command.value) == 0) {
-//            curCommand &= command.value;
-//        }
         curCommand = command.value;
-        Log.d(TAG, "apply: " + command.name());
+        if (mSocket.isConnected()) {
+            write(curCommand);
+            Log.d(TAG, "Command apply: " + command.name() + " (" + curCommand + ")");
+        }
     }
 
     private void write(int msg) {
