@@ -20,7 +20,7 @@ gen
 
 # local
 local.properties
-
+proguard.cfg
 
 # log files
 log*.txt
@@ -33,11 +33,8 @@ log*.txt
 # eclipse
 *.metadata
 *.settings
-*.prefs
-*.project
-*.classpath
 
-*.gradle
 #idea
 *.idea
+*.iml
 out/
