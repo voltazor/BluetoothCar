@@ -38,3 +38,6 @@ log*.txt
 *.idea
 *.iml
 out/
+ant.properties
+build.xml
+proguard-project.txt
